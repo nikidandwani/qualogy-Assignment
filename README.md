@@ -9,3 +9,5 @@ to start the application and then hit
 http://localhost:8080 in the browser and enjoy you own TODO app.
 
 On Mouse hover on the cards, you will be able to see options to edit description, delete the task or mark it as done.
+Please refer below sample screenshot
+![picture](demoScreenshot.png)
