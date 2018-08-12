@@ -1,0 +1,171 @@
+<div data-ng-controller="TodoController as taskCtrl">
+
+    <h1 class="text-center">Add a new Task</h1>
+    <div class="container">
+        <div class="panel panel-success">
+            <div class="input-group">
+                <input type="text" class="form-control" ng-model="taskCtrl.todo.description"
+                       placeholder="Add a to-do..."
+                       onkeydown="if (event.keyCode == 13) document.getElementById('btnAddTodo').click()">
+                <span class="input-group-btn">
+					<button style="float: right;height: 34px" id="btnAddTodo" class="btn btn-success btn-lg"
+                            type="button" ng-click="taskCtrl.addTodo()">Add</button>
+				</span>
+            </div>
+            <!-- /input-group -->
+        </div>
+        <div class="alert alert-success" id="success-alert">
+            <button type="button" class="close" data-dismiss="alert">x</button>
+            <h3><strong>Success! </strong>
+                Task added in pending tasks list.
+            </h3>
+        </div>
+        <div ng-show="serverError" class="alert alert-danger fade in">
+            <h3>Application is not available at the moment, please try again after some time</h3>
+        </div>
+
+    </div>
+
+    <h1 class="text-center">Pending Tasks</h1>
+    <div class="container">
+        <div ng-show="!pendingtodos.length" class="panel panel-warning">
+            <div class="panel-heading"><h3>No pending tasks!!</h3></div>
+        </div>
+
+        <div data-ng-repeat="task in pendingtodos = ( todos  | filter:{completed:false})">
+            <!--<div data-ng-repeat="task in todos  | filter:{completed:false}">-->
+            <div class="col-lg-4">
+                <div class="our-tasklist-main">
+
+                    <div class="task-front"
+                         ng-class="{'task-front': task.completed == 'false' , 'task-front-done': task.completed == 'true' } ">
+                        <h3>Task Id: {{task.id}}</h3>
+                        <p>{{task.description}}</p>
+                    </div>
+
+                    <div class="task-back">
+
+<span>
+<input style="float: right;" type="checkbox" ng-model="task.completed" ng-change="taskCtrl.editTodo(task)">
+		<h3>Task Description:</h3>
+
+<a ng-hide="updateDescription &&  editingTodo.id == task.id" style="float: right;">
+          <span class="glyphicon glyphicon-pencil" ng-click="taskCtrl.updateDescription(task)"></span>
+        </a>
+		<a ng-hide="!updateDecsription && !(editingTodo.id == task.id)" style="float: right;">
+          <span class="glyphicon glyphicon-ok" ng-click="taskCtrl.finishEditing(task)"></span>
+        </a>
+	<h4 ng-hide="!updateDecsription && !(editingTodo.id == task.id)">	<input type="text" ng-model="task.description"></h4>
+	<h4 ng-hide="updateDescription &&  editingTodo.id == task.id">{{task.description}}</h4>
+	<a href="#" style="float: right;">
+          <span class="glyphicon glyphicon-trash" ng-click="taskCtrl.deleteTodo(task.id)"></span>
+        </a>
+	</span>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <h1 class="text-center">Completed Tasks</h1>
+    <div class="container">
+
+        <div ng-show="!completedtodos.length" class="panel panel-warning">
+            <div class="panel-heading"><h3>No completed tasks!!</h3></div>
+        </div>
+
+        <div data-ng-repeat="task in completedtodos = ( todos  | filter:{completed:true})">
+            <!--<div data-ng-repeat="task in todos  | filter:{completed:true}">-->
+            <div class="col-lg-4">
+                <div class="our-tasklist-main">
+
+                    <div class="task-front"
+                         ng-class="{'task-front': task.completed == 'false' , 'task-front-done': task.completed == 'true' } ">
+                        <h3>Task Id: {{task.id}}</h3>
+                        <p>{{task.description}}</p>
+                    </div>
+
+                    <div class="task-back">
+	<span>
+		<input style="float: right;" type="checkbox" ng-model="task.completed" ng-change="taskCtrl.editTodo(task)">
+		<h3>Task Description:</h3>
+
+<a ng-hide="updateDescription &&  editingTodo.id == task.id" style="float: right;">
+          <span class="glyphicon glyphicon-pencil" ng-click="taskCtrl.updateDescription(task)"></span>
+        </a>
+		<a ng-hide="!updateDecsription && !(editingTodo.id == task.id)" style="float: right;">
+          <span class="glyphicon glyphicon-ok" ng-click="taskCtrl.finishEditing(task)"></span>
+        </a>
+	<h4 ng-hide="!updateDecsription && !(editingTodo.id == task.id)">	<input type="text" ng-model="task.description"></h4>
+	<h4 ng-hide="updateDescription &&  editingTodo.id == task.id">{{task.description}}</h4>
+		<a href="#" style="float: right;">
+          <span class="glyphicon glyphicon-trash" ng-click="taskCtrl.deleteTodo(task.id)"></span>
+        </a>
+	</span>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div ng-show="todos.length" class="container" style="margin-bottom: 5%">
+				<span class="input-group-btn">
+					<button style="float: right;border-radius: 4px;" class="btn btn-danger btn-lg btn-block"
+                            type="button" ng-click="taskCtrl.deleteAllTodos()" data-toggle="modal"
+                            data-target="#exampleModal">Delete All tasks</button>
+				</span>
+
+
+    </div>
+
+    <!--
+        </div>
+    &lt;!&ndash; Modal &ndash;&gt;
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    ...
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    -->
+    <!--	<div class="container">
+            <h2>Modal Example</h2>
+            &lt;!&ndash; Trigger the modal with a button &ndash;&gt;
+            <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Open Modal</button>
+
+
+        </div>
+        &lt;!&ndash; Modal &ndash;&gt;
+        <div class="modal fade" id="myModal" role="dialog">
+            <div class="modal-dialog">
+
+                &lt;!&ndash; Modal content&ndash;&gt;
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Modal Header</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>Some text in the modal.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>-->
+
+</div>
